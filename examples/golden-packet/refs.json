@@ -8,7 +8,7 @@
   "https://example.invalid/aviation/packet/incident-index.json": "incident-index.json",
   "https://example.invalid/aviation/packet/synthetic-observation.json": "synthetic-observation.json",
   "https://example.invalid/aviation/packet/authority/synthetic-reviewer-01": "authority-record.json",
-  "https://example.invalid/aviation/packet/keys/dataset": "dataset-public-key.b64",
   "https://example.invalid/aviation/packet/override-procedure": "override-procedure.txt",
-  "https://example.invalid/aviation/packet/buyer-decision.json": "buyer-decision.json"
+  "https://example.invalid/aviation/packet/buyer-decision.json": "buyer-decision.json",
+  "https://example.invalid/aviation/packet/keys/dataset-sha256-51096d6dae41bd2d3fc27286c043e9addd3b74dfb332b46118d275643567f909": "dataset-public-key.b64"
 }

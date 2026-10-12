@@ -59,15 +59,33 @@ The Card binds each named operating condition to stable local `condition_id` and
 
 ## Deployment and rollback
 
-There is no deployment target or deploy command in this PR-only phase. To review, use the two linked PRs below and their exact-head CI. Withdraw the PRs to discard the candidate before merge. If merged later, revert the relevant commits and rerun validation; no runtime state migration is involved.
+There is no deployment target or deploy command in this PR-only phase. Review the two linked PRs below and require exact-head CI again after each update. Withdraw the PRs to discard the candidate before merge. If merged later, revert the relevant commits and rerun validation; no runtime state migration is involved.
 
 ## Progress
 
 - [x] Packet, mapping, negative controls, and local checks completed.
-- [x] Rust CI race repaired in a separate PR, pinned at `7f84b7e`.
-- [x] Hosted packet, fleet summary, baseline validator, and Rust PR checks passed.
+- [x] Rust CI race repaired in a separate PR, originally pinned at `7f84b7e`.
+- [x] Earlier hosted packet, fleet summary, baseline validator, and Rust PR checks passed at their recorded heads.
+- [x] Local report v0.2.0 packet regenerated and checked against Rust `dc6ff8f`.
+- [ ] Hosted exact-head checks for the refreshed packet after review and push.
 - [ ] Merge or publication: outside this review-only scope.
 
 ## Outcome
 
-[Aviation packet PR #1](https://github.com/mizcausevic-dev/aviation-ml-assurance-card-spec/pull/1) and [Rust test repair PR #1](https://github.com/mizcausevic-dev/aero-dataset-provenance-rs/pull/1) remain open and unmerged. The fictional packet reports two evaluation samples in each of its two referenced bins, no declared gaps, and passing cryptographic checks against test-only keys. It does not establish representative coverage, source rights, reviewer authority, maintenance release, procurement approval, airworthiness, or a deployed boundary. Merge order, if later authorized: Rust repair first, then repin the Aviation workflow to the merged Rust commit and rerun exact-head checks.
+[Aviation packet PR #1](https://github.com/mizcausevic-dev/aviation-ml-assurance-card-spec/pull/1) and [Rust PR #1](https://github.com/mizcausevic-dev/aero-dataset-provenance-rs/pull/1) remain open and unmerged at this review checkpoint. The locally refreshed fictional packet reports two distinct observed file hashes in each of its two referenced bins, no declared gaps, and passing cryptographic checks against test-only keys. Exact-head hosted CI for the refreshed packet remains a release gate. It does not establish independent acquisitions, representative coverage, source rights, reviewer authority, maintenance release, procurement approval, airworthiness, or a deployed boundary. Merge order, if later authorized: Rust PR first, then repin the Aviation workflow to the merged Rust commit and rerun exact-head checks.
+
+## Report v0.2.0 follow-up (2026-10-12)
+
+The reviewed Rust PR head `dc6ff8fb1d0558df7ac009883c2bfead8d76971d` changes ODD `evaluation_samples` from manifest-row counts to distinct observed SHA-256 file hashes within each bin. Historical v0.1.0 signatures remain verifiable for archival use, but new signing requires report v0.2.0. The Aviation packet validator now requires v0.2.0 and independently recounts hashes from the manifest and report. The existing validation and test files differ, so the fictional per-bin count remains two. Distinct bytes do not prove independent acquisitions or adequate coverage.
+
+The manual `scripts/regenerate-golden-packet.mjs --write` helper checked the exact Rust commit and MRO signature-helper commit `c3cf35b8955194266d70eb855b307ddb6c1bd1dd`, with clean tracked source trees. It generated fresh Ed25519 keys in process memory, passed the dataset seed only through a child-process environment variable, and wrote only test public keys. Test key selectors now include complete public-key SHA-256 fingerprints. The regenerated report signature was timestamped `2026-10-12T20:49:49Z`; synthetic MRO review/sign, incident discovery/disclosure/publication, and the pending buyer fixture were stamped in order through `20:49:55Z`. A wall-clock readback at `20:50:06Z` showed no future-dated fixture. The MRO and incident JCS hashes in the pending Decision Card were recomputed; its status remains `pending`.
+
+Executed checks at this local follow-up head:
+
+- `cargo build --locked` and `cargo test --locked --all-targets` in the exact Rust worktree: exit 0; 14 Rust tests passed. Windows emitted path-canonicalization and hardlink-cache warnings.
+- `npm.cmd test` and `npm.cmd run test:packet` in this worktree: exit 0; local schema/negative controls and the fresh four-schema packet, report parity, two signatures, hashes, timeline, and tamper/gap controls passed.
+- The pinned fleet Action `dist/index.cjs` on both golden cards: exit 0, declared-field gate passed. It does not validate evidence or signer authority.
+- `node --check scripts/regenerate-golden-packet.mjs`, `node --check scripts/validate-golden-packet.mjs`, `actionlint .github/workflows/golden-packet.yml`, and `git diff --check`: exit 0.
+- `gitleaks detect --source . --no-git --exit-code 1 --redact`: exit 0; it reported no findings over approximately 85.6 KB. This scan is not proof that a complete security audit is clean.
+
+At this local preparation checkpoint, no hosted CI had run for the refreshed Aviation packet. Record the exact-head run after the review branch update. Any real signer identity, buyer, maintenance authority, dataset rights, representative ODD coverage, and deployment remain unverified.

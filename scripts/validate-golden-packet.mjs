@@ -22,6 +22,7 @@ const { parseJcsJsonStrict } = await import(pathToFileURL(join(mroRepo, "scripts
 const raw = (name) => readFileSync(join(packet, name));
 const json = (name) => parseJcsJsonStrict(raw(name));
 const sha256 = (bytes) => `sha256:${createHash("sha256").update(bytes).digest("hex")}`;
+const keyFingerprint = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const jcsHash = (value) => sha256(Buffer.from(canonicalize(value), "utf8"));
 const base = "https://example.invalid/aviation/packet/";
 const resourceMap = json("refs.json");
@@ -127,6 +128,28 @@ function assertNoOddFindings(result) {
   }, `ODD linkage has gaps: ${JSON.stringify(result.findings)}`);
 }
 
+function assertDistinctEvaluationCounts(manifest, report) {
+  const samples = new Map(report.samples.map((sample) => [sample.id, sample]));
+  assert.equal(samples.size, report.samples.length, "duplicate report sample ID");
+  assert.equal(report.sample_count, manifest.samples.length, "report sample count differs from manifest");
+  const evaluation = manifest.samples.filter((sample) => sample.split === "validation" || sample.split === "test");
+  assert.equal(report.evaluation_sample_count, evaluation.length, "raw evaluation row count differs from manifest");
+  for (const dimension of report.odd_observations) {
+    assert.deepEqual(dimension.bins.map(({ bin }) => bin), manifest.odd_bins[dimension.dimension], `unknown ODD dimension: ${dimension.dimension}`);
+    for (const bin of dimension.bins) {
+      const distinctHashes = new Set(evaluation
+        .filter((sample) => sample.odd_values[dimension.dimension] === bin.bin)
+        .map((sample) => {
+          const observed = samples.get(sample.id);
+          assert.ok(observed && observed.path === sample.path && observed.split === sample.split, `missing report sample: ${sample.id}`);
+          assert.match(observed.sha256, /^sha256:[0-9a-f]{64}$/);
+          return observed.sha256;
+        }));
+      assert.equal(bin.evaluation_samples, distinctHashes.size, `ODD bin ${dimension.dimension}:${bin.bin} must count distinct observed file hashes`);
+    }
+  }
+}
+
 function assertBuyerHashes(buyerDecision, documents) {
   assert.equal(buyerDecision.subject.documents_reviewed.length, documents.size);
   for (const ref of buyerDecision.subject.documents_reviewed) {
@@ -169,7 +192,8 @@ assert.ok(mro.evidence_refs.includes(url("synthetic-observation.json")));
 
 assert.equal(report.dataset_id, manifest.dataset_id, "dataset ID mismatch");
 assert.equal(report.manifest_jcs_sha256, jcsHash(manifest), "manifest digest mismatch");
-assert.equal(report.report_version, "0.1.0");
+assert.equal(report.report_version, "0.2.0", "only distinct-hash ODD report semantics may support this packet");
+assertDistinctEvaluationCounts(manifest, report);
 const observations = oddFindings(card, manifest, report);
 process.stdout.write(`ODD findings ${JSON.stringify(observations.findings)}; per-bin observations ${JSON.stringify(observations.counts)}\n`);
 assertNoOddFindings(observations);
@@ -193,6 +217,7 @@ assert.ok(Date.parse(mro.human_review.reviewed_at) >= Date.parse(attestation.sig
 assert.ok(Date.parse(incident.incident.discovered_at) >= Date.parse(mro.signature.signed_at), "incident fixture predates MRO signature");
 assert.ok(Date.parse(incident.published_at) >= Date.parse(incident.incident.disclosed_at), "incident published before disclosure");
 const trustedMro = { keyId: authority.key_id, publicKey: createPublicKey(raw("mro-public-key.pub")) };
+assert.equal(mro.signature.key_id, `synthetic-aero-packet-reviewer-sha256-${keyFingerprint(trustedMro.publicKey.export({ type: "spki", format: "der" }))}`);
 assert.ok(verifyCardSignatureRaw(raw("mro-card.json"), trustedMro), "MRO signature invalid");
 assert.ok(!verifyCardSignatureRaw(JSON.stringify({ ...mro, finding: { ...mro.finding, confidence: 0.72 } }), trustedMro), "tampered MRO signature accepted");
 assert.ok(!verifyCardSignatureRaw(raw("mro-card.json"), { ...trustedMro, keyId: "wrong-key" }), "wrong MRO key ID accepted");
@@ -215,8 +240,11 @@ try {
   const analyzed = runRust("analyze", join(packet, "dataset", "manifest.json"), join(packet, "dataset"), regenerated);
   assert.equal(analyzed.status, 0, `Rust analyzer failed: ${analyzed.stderr}`);
   assert.equal(canonicalize(parseJcsJsonStrict(readFileSync(regenerated))), canonicalize(report), "committed report differs from fresh dataset analysis");
-  assert.equal(attestation.key_url, url("keys/dataset"), "report key URL differs from independently expected selector");
-  const verifyArgs = [regenerated, join(packet, "dataset-report.attestation.json"), url("keys/dataset")];
+  const datasetPublicKey = Buffer.from(raw("dataset-public-key.b64").toString("ascii").trim(), "base64");
+  assert.equal(datasetPublicKey.length, 32, "dataset test public key must contain 32 bytes");
+  const expectedKeyUrl = url(`keys/dataset-sha256-${keyFingerprint(datasetPublicKey)}`);
+  assert.equal(attestation.key_url, expectedKeyUrl, "report key URL differs from test key fingerprint");
+  const verifyArgs = [regenerated, join(packet, "dataset-report.attestation.json"), expectedKeyUrl];
   const verified = runRust("verify", ...verifyArgs);
   assert.equal(verified.status, 0, `Rust report signature failed: ${verified.stderr}`);
   const altered = structuredClone(report);
@@ -248,6 +276,9 @@ assert.deepEqual(oddFindings(badBin, manifest, report).findings.unknown_bin_refs
 const unknownReport = structuredClone(report);
 unknownReport.odd_observations[0].missing_or_undeclared_value_samples = 1;
 assert.deepEqual(oddFindings(card, manifest, unknownReport).findings.unknown_evaluation_values, ["illumination:1"]);
+const inflatedReport = structuredClone(report);
+inflatedReport.odd_observations[0].bins[0].evaluation_samples++;
+assert.throws(() => assertDistinctEvaluationCounts(manifest, inflatedReport), /distinct observed file hashes/);
 const badDecision = structuredClone(decision);
 badDecision.subject.documents_reviewed[0].content_hash = `sha256:${"0".repeat(64)}`;
 assert.throws(() => assertBuyerHashes(badDecision, expectedDocs), /buyer content hash mismatch/);

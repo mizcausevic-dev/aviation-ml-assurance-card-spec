@@ -21,15 +21,15 @@
   "human_review": {
     "staff_id": "synthetic-reviewer-01",
     "decision": "override",
-    "reviewed_at": "2026-10-12T19:50:42Z",
+    "reviewed_at": "2026-10-12T20:49:50Z",
     "authority_ref": "https://example.invalid/aviation/packet/authority/synthetic-reviewer-01",
     "comment": "Fixture review of an AI suggestion only, not a maintenance release.",
     "override_reason": "Synthetic evaluation omission; discard the model suggestion pending separate human assessment."
   },
   "signature": {
     "profile": "JCS-SHA256-Ed25519-v1",
-    "key_id": "synthetic-aero-packet-reviewer-key",
-    "signed_at": "2026-10-12T19:50:43Z",
-    "signature_b64url": "IkcD6pdnm4RzcTXdiW4omao-BKcrSn3KjrwSLsRzw1JZiUHrn_7vEO6fdePyfMXRRM2mIunB6_WBLL40YAuNDA"
+    "key_id": "synthetic-aero-packet-reviewer-sha256-c06a1b31969f7884a6dd0a207bdf1b2ea78a594bc99b7f797a170b65c1c48bbb",
+    "signed_at": "2026-10-12T20:49:51Z",
+    "signature_b64url": "JOcwz9QF1RpY5R_VJDjSl0bmBW26sYoJho-Nfr6x38TTJkpnrBBLQxsQARpTWpJtcmPUAgGEiklHwLsgxPXvDA"
   }
 }

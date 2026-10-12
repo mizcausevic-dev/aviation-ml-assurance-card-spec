@@ -1,5 +1,5 @@
 {
-  "report_version": "0.1.0",
+  "report_version": "0.2.0",
   "dataset_id": "SYNTHETIC-AERO-PACKET-001",
   "manifest_jcs_sha256": "sha256:faccd3f050fde3cdb2dbfb842115e14c2c118125aee0e5f53d520e938af8fe16",
   "sample_count": 3,
@@ -57,7 +57,7 @@
   "declared_checks_passed": true,
   "limitations": [
     "Hashes bind observed bytes, not dataset origin, rights, label quality, or completeness.",
-    "ODD counts are observations against declared bins and minimums; bin labels are not machine-bound to aviation-card operating conditions. They do not establish statistical representativeness or airworthiness approval.",
+    "ODD bin counts use distinct observed file hashes, not manifest rows; different hashes do not prove independent acquisition. Bin labels are not machine-bound to aviation-card operating conditions, and counts do not establish statistical representativeness or airworthiness approval.",
     "Group leakage is limited to supplied pseudonymous group_id values; temporal leakage is evaluated only when a boundary is declared.",
     "File replacement during analysis is not prevented; operate on an immutable snapshot for release evidence."
   ]

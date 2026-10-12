@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           repository: mizcausevic-dev/aero-dataset-provenance-rs
-          ref: 7f84b7ec51fc803224b8a7bcdb7b379c707258a9
+          ref: dc6ff8fb1d0558df7ac009883c2bfead8d76971d
           path: deps/dataset
           persist-credentials: false
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
