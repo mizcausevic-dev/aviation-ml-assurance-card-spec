@@ -1,6 +1,6 @@
 # Synthetic aerospace packet integration plan
 
-Status: local verification complete; hosted PR checks pending. Scope: a review-only PR; no public card endpoint, package release, or real aviation data.
+Status: local verification complete; first hosted packet run exposed a parallel Rust test-fixture collision. The workflow is pinned to its test-only repair commit; exact-head hosted checks are pending. Scope: review-only PRs; no public card endpoint, package release, or real aviation data.
 
 ## Acceptance
 
@@ -24,6 +24,6 @@ Status: local verification complete; hosted PR checks pending. Scope: a review-o
 - `npm.cmd run test:packet`: exit 0; four schemas, the URI map, fresh Rust analysis, both independent test-key signature checks, document and artifact hashes, chronology, and tamper/gap negatives passed. The positive ODD map reported two evaluation samples for each of two declared bins and no unknowns. These are fixture counts only.
 - `npm.cmd ci` and `npm.cmd test` in `mro-ai-signoff-card-spec`: exit 0; its original signed fixture and malformed/tampered controls passed.
 - `python -m unittest discover -s tests -v` in `ai-incident-card-spec`: exit 0, 5 tests. The packet validator also independently checks the pinned Incident schema.
-- `cargo clippy --locked --all-targets --manifest-path .../aero-dataset-provenance-rs/Cargo.toml -- -D warnings` and `cargo test --locked --all-targets --manifest-path .../aero-dataset-provenance-rs/Cargo.toml` from this repo: exit 0, 8 Rust tests. `cargo fmt --all --check` in the Rust repo: exit 0 on unsandboxed retry; sandboxed attempt failed with Windows access denied before checking formatting.
+- `cargo clippy --locked --all-targets -- -D warnings`, `cargo fmt --all --check`, and `cargo test --locked --all-targets` in the Rust repair branch: exit 0; 9 Rust tests, including 32 concurrent fixture creations. Formatting and Clippy needed unsandboxed retries because the Windows sandbox denied their configuration read.
 - `actionlint .github/workflows/golden-packet.yml`, `node --check scripts/validate-golden-packet.mjs`, `git diff --check`, and `gitleaks detect --source . --no-git --exit-code 1 --redact`: exit 0; gitleaks reported no findings in the checked files.
-- Hosted CI: pending an exact-head pull request run. The workflow checks out five referenced repos/actions by SHA, runs the structural fleet Action separately, and runs schema, Rust, signature, and packet gates.
+- Hosted run [38301102426](https://github.com/mizcausevic-dev/aviation-ml-assurance-card-spec/actions/runs/38301102426): structural-summary succeeded; packet failed before this repo's integration gate because the pinned Rust dependency's parallel tests hit `AlreadyExists` while creating a fixture directory. Rust repair PR [#1](https://github.com/mizcausevic-dev/aero-dataset-provenance-rs/pull/1) changes test fixtures only and is pinned here at `7f84b7ec51fc803224b8a7bcdb7b379c707258a9`; its [push](https://github.com/mizcausevic-dev/aero-dataset-provenance-rs/actions/runs/38301479961) and [PR](https://github.com/mizcausevic-dev/aero-dataset-provenance-rs/actions/runs/38301510309) CI each passed. This packet PR's exact-head rerun remains pending.

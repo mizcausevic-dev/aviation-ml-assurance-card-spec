@@ -1,6 +1,6 @@
 import { strict as assert } from "node:assert";
 import { createHash, createPublicKey } from "node:crypto";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { lstatSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -36,6 +36,11 @@ function fixtureFor(uri) {
   const selected = resolve(packet, local);
   const subpath = relative(packet, selected);
   assert.ok(subpath && !subpath.startsWith(".." + sep) && subpath !== ".." && !isAbsolute(subpath), `fixture mapping escapes packet: ${local}`);
+  let component = packet;
+  for (const part of subpath.split(sep)) {
+    component = join(component, part);
+    assert.ok(!lstatSync(component).isSymbolicLink(), `symlinked fixture path: ${local}`);
+  }
   readFileSync(selected); // Existence check without network access.
   return selected;
 }
@@ -246,4 +251,7 @@ assert.deepEqual(oddFindings(card, manifest, unknownReport).findings.unknown_eva
 const badDecision = structuredClone(decision);
 badDecision.subject.documents_reviewed[0].content_hash = `sha256:${"0".repeat(64)}`;
 assert.throws(() => assertBuyerHashes(badDecision, expectedDocs), /buyer content hash mismatch/);
+const brokenReference = structuredClone(incident);
+brokenReference.aviation_profile.mro_signoff_card_uris = [url("missing-mro-card.json")];
+assert.throws(() => assertAllPacketUrisMapped(brokenReference), /unmapped synthetic URI/);
 process.stdout.write("VERIFIED four schemas, URI map, cross-card IDs/hashes, fresh Rust analysis, two signatures, and tamper/gap negatives\n");
