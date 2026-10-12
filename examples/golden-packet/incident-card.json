@@ -1,0 +1,61 @@
+{
+  "incident_card_version": "0.1",
+  "incident": {
+    "id": "INC-2026-10-12-aero-packet-001",
+    "title": "Fictional evaluation omission in a synthetic inspection suggestion",
+    "severity": "low",
+    "categories": [
+      "other"
+    ],
+    "discovered_at": "2026-10-12T19:50:44Z",
+    "disclosed_at": "2026-10-12T19:50:45Z",
+    "status": "active"
+  },
+  "categories_other_text": "Synthetic AI-assisted inspection finding near-miss",
+  "affected": {
+    "vendor": "Fictional Aviation Lab",
+    "products": [
+      "Synthetic Inspection Assistant"
+    ],
+    "versions": [
+      "0.1.0"
+    ]
+  },
+  "summary": "In a fictional test image, an inspection model omitted one simulated indication. A human reviewer caught the omission before any maintenance decision. This is a synthetic format example, not a real event.",
+  "root_cause": {
+    "category": "evaluation_gap",
+    "description": "The fictional evaluation set lacked the simulated lighting condition in the test image."
+  },
+  "harm": {
+    "severity_justification": "No real aircraft, person, maintenance record, or operational effect exists in this synthetic example.",
+    "manifested": false
+  },
+  "mitigation": {
+    "actions_taken": [
+      "Fictional team quarantined the model and planned a simulated lighting case for a future test set."
+    ],
+    "permanent_fix": false,
+    "rollout_status": "planned"
+  },
+  "aviation_profile": {
+    "profile_version": "0.1",
+    "domain": "maintenance",
+    "incident_scope": "Offline, synthetic image review only; no release-to-service decision was made.",
+    "aviation_ml_card_uri": "https://example.invalid/aviation/packet/aviation-card.json",
+    "mro_signoff_card_uris": [
+      "https://example.invalid/aviation/packet/mro-card.json"
+    ],
+    "maintenance_release_note": "The fictional AI review record is separate from any authorised maintenance release."
+  },
+  "published_by": {
+    "name": "Fictional Aviation Lab",
+    "role": "vendor"
+  },
+  "published_at": "2026-10-12T19:50:45Z",
+  "last_updated_at": "2026-10-12T19:50:45Z",
+  "evidence": {
+    "evidence_uris": [
+      "https://example.invalid/aviation/packet/dataset-report.json"
+    ]
+  }
+}

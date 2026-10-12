@@ -1,0 +1,82 @@
+name: Synthetic aerospace packet
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  packet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: mizcausevic-dev/aero-dataset-provenance-rs
+          ref: d7082399ea431d327e4c4ac729be8ce840b0a240
+          path: deps/dataset
+          persist-credentials: false
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: mizcausevic-dev/mro-ai-signoff-card-spec
+          ref: c3cf35b8955194266d70eb855b307ddb6c1bd1dd
+          path: deps/mro
+          persist-credentials: false
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: mizcausevic-dev/ai-incident-card-spec
+          ref: 263cc432d8657ef11152f5e94b941ead035fa0d9
+          path: deps/incident
+          persist-credentials: false
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: mizcausevic-dev/ai-procurement-decision-spec
+          ref: 44e3f6d36a6f3640c1acc7d7c9e07614213f683a
+          path: deps/decision
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install the dataset tool's declared minimum Rust toolchain
+        run: |
+          rustup toolchain install 1.88.0 --profile minimal --component clippy --component rustfmt
+          rustup default 1.88.0
+          rustc --version
+      - name: Run the card and MRO validators
+        run: |
+          npm ci
+          npm test
+          npm --prefix deps/mro ci
+          npm --prefix deps/mro test
+      - name: Run the dataset tool checks and build
+        run: |
+          cargo fmt --all --check --manifest-path deps/dataset/Cargo.toml
+          cargo clippy --locked --all-targets --manifest-path deps/dataset/Cargo.toml -- -D warnings
+          cargo test --locked --all-targets --manifest-path deps/dataset/Cargo.toml
+          cargo build --locked --manifest-path deps/dataset/Cargo.toml
+      - name: Validate the golden packet, signatures, and tamper controls
+        env:
+          AERO_MRO_SPEC_DIR: ${{ github.workspace }}/deps/mro
+          AERO_INCIDENT_SPEC_DIR: ${{ github.workspace }}/deps/incident
+          AERO_DECISION_SPEC_DIR: ${{ github.workspace }}/deps/decision
+          AERO_DATASET_REPO: ${{ github.workspace }}/deps/dataset
+        run: npm run test:packet
+
+  structural-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: mizcausevic-dev/aviation-ml-card-fleet-summary-action@90bad4f77c11689e6674f234a1f14c0d79eb6966
+        with:
+          aviation_cards: examples/golden-packet/aviation-card.json
+          mro_cards: examples/golden-packet/mro-card.json

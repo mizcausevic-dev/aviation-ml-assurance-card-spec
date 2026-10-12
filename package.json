@@ -5,7 +5,10 @@
   "type": "module",
   "description": "Local validation for the draft Aviation ML Assurance Card specification",
   "engines": { "node": ">=22" },
-  "scripts": { "test": "node scripts/validate-examples.mjs" },
+  "scripts": {
+    "test": "node scripts/validate-examples.mjs",
+    "test:packet": "node scripts/validate-golden-packet.mjs"
+  },
   "devDependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1"

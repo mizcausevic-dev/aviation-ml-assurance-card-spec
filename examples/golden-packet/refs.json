@@ -1,0 +1,14 @@
+{
+  "https://example.invalid/aviation/packet/aviation-card.json": "aviation-card.json",
+  "https://example.invalid/aviation/packet/dataset-manifest.json": "dataset/manifest.json",
+  "https://example.invalid/aviation/packet/dataset-report.json": "dataset-report.json",
+  "https://example.invalid/aviation/packet/dataset-report.attestation.json": "dataset-report.attestation.json",
+  "https://example.invalid/aviation/packet/mro-card.json": "mro-card.json",
+  "https://example.invalid/aviation/packet/incident-card.json": "incident-card.json",
+  "https://example.invalid/aviation/packet/incident-index.json": "incident-index.json",
+  "https://example.invalid/aviation/packet/synthetic-observation.json": "synthetic-observation.json",
+  "https://example.invalid/aviation/packet/authority/synthetic-reviewer-01": "authority-record.json",
+  "https://example.invalid/aviation/packet/keys/dataset": "dataset-public-key.b64",
+  "https://example.invalid/aviation/packet/override-procedure": "override-procedure.txt",
+  "https://example.invalid/aviation/packet/buyer-decision.json": "buyer-decision.json"
+}
