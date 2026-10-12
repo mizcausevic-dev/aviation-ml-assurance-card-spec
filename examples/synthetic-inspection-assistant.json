@@ -1,0 +1,47 @@
+{
+  "aviation_ml_card_version": "0.1",
+  "system": {
+    "id": "synthetic-inspection-assistant",
+    "name": "Synthetic Inspection Assistant",
+    "version": "0.1.0",
+    "provider": "Example Aviation Lab (fictional)",
+    "intended_use": "Suggest regions of interest in synthetic borescope imagery for human review."
+  },
+  "assurance": {
+    "easa_ai_level": "2B",
+    "target_dal": "not_assigned",
+    "standards_posture": [
+      { "identifier": "SAE ARP6983", "status": "referenced" },
+      { "identifier": "EUROCAE ED-324", "status": "mapping_in_progress" }
+    ]
+  },
+  "odd": {
+    "summary": "Synthetic, stationary borescope imagery under declared illumination and acquisition limits.",
+    "operating_conditions": ["stationary inspection", "declared illumination range"],
+    "excluded_conditions": ["in-flight use", "unreviewed image sensors"],
+    "coverage_evidence_refs": ["https://example.org/aviation/odd-report.json"],
+    "condition_evidence": [
+      { "condition": "stationary inspection", "evidence_refs": ["https://example.org/aviation/coverage/stationary.json"] },
+      { "condition": "declared illumination range", "evidence_refs": ["https://example.org/aviation/coverage/illumination.json"] }
+    ]
+  },
+  "learning_assurance": {
+    "process_summary": "Offline model updates require a new review and versioned evidence bundle.",
+    "evidence_refs": ["https://example.org/aviation/learning-assurance.json"]
+  },
+  "data_management": {
+    "dataset_manifest_refs": ["https://example.org/aviation/dataset-manifest.json"],
+    "split_policy": "group_disjoint",
+    "leakage_check_ref": "https://example.org/aviation/leakage-report.json"
+  },
+  "human_ai_teaming": {
+    "role": "decision_support",
+    "human_override_available": true,
+    "override_procedure_ref": "https://example.org/aviation/override-procedure",
+    "human_responsibility_summary": "A qualified human reviews every suggested finding; the model does not approve maintenance work."
+  },
+  "links": {
+    "incident_card_index_uri": "https://example.org/.well-known/ai-incidents.json",
+    "ai_evidence_uris": ["https://example.org/aviation/evidence/fixture.json"]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "aviation_ml_card_version": "0.1",
+  "system": {
+    "id": "synthetic-level-3b",
+    "name": "Out of scope system",
+    "version": "0.1.0",
+    "provider": "Example Aviation Lab (fictional)",
+    "intended_use": "Synthetic example of a system outside the draft's scope."
+  },
+  "assurance": { "easa_ai_level": "3B", "target_dal": "not_assigned", "standards_posture": [] },
+  "odd": {
+    "summary": "Synthetic operation outside this draft's assurance profile.",
+    "operating_conditions": ["synthetic flight"],
+    "excluded_conditions": [],
+    "coverage_evidence_refs": [],
+    "condition_evidence": [{ "condition": "synthetic flight", "evidence_refs": [] }]
+  },
+  "learning_assurance": { "process_summary": "No assurance evidence is claimed for this invalid fixture.", "evidence_refs": [] },
+  "data_management": { "dataset_manifest_refs": [], "split_policy": "group_disjoint" },
+  "human_ai_teaming": {
+    "role": "autonomous",
+    "human_override_available": false,
+    "human_responsibility_summary": "No human override path is declared in this invalid fixture."
+  }
+}
