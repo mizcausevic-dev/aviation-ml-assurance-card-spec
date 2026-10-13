@@ -1,6 +1,6 @@
 # Synthetic aerospace packet integration plan
 
-Status: local verification complete and the repaired hosted packet workflow passed at `ce0cdfb`. Scope: review-only PRs; no public card endpoint, package release, or real aviation data.
+Status: local verification complete and the hosted packet workflow passed at `6b64b16`. Scope: review-only PRs; no public card endpoint, package release, or real aviation data.
 
 ## Goal
 
@@ -67,12 +67,12 @@ There is no deployment target or deploy command in this PR-only phase. Review th
 - [x] Rust CI race repaired in a separate PR, originally pinned at `7f84b7e`.
 - [x] Earlier hosted packet, fleet summary, baseline validator, and Rust PR checks passed at their recorded heads.
 - [x] Local report v0.2.0 packet regenerated and checked against Rust `dc6ff8f`.
-- [ ] Hosted exact-head checks for the refreshed packet after review and push.
+- [x] Hosted packet, structural summary, and baseline validation passed at `6b64b16` after the report v0.2.0 refresh.
 - [ ] Merge or publication: outside this review-only scope.
 
 ## Outcome
 
-[Aviation packet PR #1](https://github.com/mizcausevic-dev/aviation-ml-assurance-card-spec/pull/1) and [Rust PR #1](https://github.com/mizcausevic-dev/aero-dataset-provenance-rs/pull/1) remain open and unmerged at this review checkpoint. The locally refreshed fictional packet reports two distinct observed file hashes in each of its two referenced bins, no declared gaps, and passing cryptographic checks against test-only keys. Exact-head hosted CI for the refreshed packet remains a release gate. It does not establish independent acquisitions, representative coverage, source rights, reviewer authority, maintenance release, procurement approval, airworthiness, or a deployed boundary. Merge order, if later authorized: Rust PR first, then repin the Aviation workflow to the merged Rust commit and rerun exact-head checks.
+[Aviation packet PR #1](https://github.com/mizcausevic-dev/aviation-ml-assurance-card-spec/pull/1) and [Rust PR #1](https://github.com/mizcausevic-dev/aero-dataset-provenance-rs/pull/1) remain open and unmerged at this review checkpoint. The locally refreshed fictional packet reports two distinct observed file hashes in each of its two referenced bins, no declared gaps, and passing cryptographic checks against test-only keys. The refreshed packet's [hosted packet and structural-summary jobs](https://github.com/mizcausevic-dev/aviation-ml-assurance-card-spec/actions/runs/38307010652) and [baseline validator](https://github.com/mizcausevic-dev/aviation-ml-assurance-card-spec/actions/runs/38307010623) passed at `6b64b16`; rerun exact-head CI after any further update. This does not establish independent acquisitions, representative coverage, source rights, reviewer authority, maintenance release, procurement approval, airworthiness, or a deployed boundary. Merge order, if later authorized: Rust PR first, then repin the Aviation workflow to the merged Rust commit and rerun exact-head checks.
 
 ## Report v0.2.0 follow-up (2026-10-12)
 
@@ -88,4 +88,4 @@ Executed checks at this local follow-up head:
 - `node --check scripts/regenerate-golden-packet.mjs`, `node --check scripts/validate-golden-packet.mjs`, `actionlint .github/workflows/golden-packet.yml`, and `git diff --check`: exit 0.
 - `gitleaks detect --source . --no-git --exit-code 1 --redact`: exit 0; it reported no findings over approximately 85.6 KB. This scan is not proof that a complete security audit is clean.
 
-At this local preparation checkpoint, no hosted CI had run for the refreshed Aviation packet. Record the exact-head run after the review branch update. Any real signer identity, buyer, maintenance authority, dataset rights, representative ODD coverage, and deployment remain unverified.
+After this preparation checkpoint, the refreshed Aviation packet's hosted jobs passed at `6b64b16` as linked above. Any real signer identity, buyer, maintenance authority, dataset rights, representative ODD coverage, and deployment remain unverified.
