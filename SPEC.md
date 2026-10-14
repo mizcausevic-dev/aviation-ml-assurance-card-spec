@@ -29,6 +29,7 @@ The server **SHOULD** use `Content-Type: application/json`, HTTPS, an appropriat
 | `odd.{summary,operating_conditions[],excluded_conditions[]}` | Declared ODD and its explicit exclusions. |
 | `odd.coverage_evidence_refs[]` | URIs of overall coverage reports, possibly empty in an incomplete draft. |
 | `odd.condition_evidence[]` | Exactly one row per operating condition, with zero or more evidence URIs. Empty evidence lists are explicit gaps. |
+| `odd.condition_evidence[].{condition_id,bin_refs}` | Optional stable condition ID and exact pairs of dataset-manifest ODD dimension/bin IDs. Both fields appear together. Empty `bin_refs` is an explicit unmapped condition. |
 | `learning_assurance.{process_summary,evidence_refs[]}` | Publisher-declared learning lifecycle and evidence pointers. |
 | `data_management.{dataset_manifest_refs[],split_policy}` | Dataset provenance pointers and train/validation/test split policy. |
 | `human_ai_teaming.{role,human_override_available,human_responsibility_summary}` | Declared allocation of responsibility and override availability. |
@@ -43,8 +44,11 @@ The server **SHOULD** use `Content-Type: application/json`, HTTPS, an appropriat
 4. `odd.condition_evidence[]` **MUST** map every `odd.operating_conditions[]` string exactly once. The schema checks row shape; the local semantic validator checks set equality and duplicates. An empty `evidence_refs[]` is valid but an explicit gap.
 5. An operating condition **MUST NOT** also be listed under `excluded_conditions[]`. Standards identifiers **MUST NOT** be repeated.
 6. `data_management.split_policy="other"` **MUST** include `split_policy_detail`.
+7. When a publisher uses `condition_id`/`bin_refs`, every operating condition **MUST** have a unique `condition_id`. A bin pair **MUST** name a declared dimension and bin in the specific, content-hashed dataset manifest cited as evidence. The schema checks syntax; a packet validator or reviewer **MUST** verify the cross-document pair. Do not infer that one bin count measures the entire condition.
 
 Data leakage detection and ODD coverage evaluation are separate engineering tasks. The card stores pointers to their outputs; it cannot prove that a test dataset was independent or that all operating conditions were exercised. Consumers **MUST NOT** convert a schema-valid or gap-free card into a certification conclusion.
+
+The optional bin IDs are stable only within the cited manifest snapshot. A changed dimension/bin name changes the manifest hash and requires a fresh mapping review. A report's per-bin evaluation count is an observation against the author's threshold; it is not a representative-coverage percentage. Missing or undeclared sample values, unmapped conditions, and unknown bin references need distinct findings. See the [synthetic packet](examples/golden-packet/README.md) for executable examples.
 
 ## 5. Standards posture and versioning
 

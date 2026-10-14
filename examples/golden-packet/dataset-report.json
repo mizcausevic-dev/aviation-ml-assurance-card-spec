@@ -1,0 +1,64 @@
+{
+  "report_version": "0.2.0",
+  "dataset_id": "SYNTHETIC-AERO-PACKET-001",
+  "manifest_jcs_sha256": "sha256:faccd3f050fde3cdb2dbfb842115e14c2c118125aee0e5f53d520e938af8fe16",
+  "sample_count": 3,
+  "evaluation_sample_count": 2,
+  "samples": [
+    {
+      "id": "test-001",
+      "path": "test.txt",
+      "split": "test",
+      "sha256": "sha256:2999af584cccedcc4ff9725bdcd295bc7a849dd11721e410187af2f0c7c623c1",
+      "byte_length": 31
+    },
+    {
+      "id": "train-001",
+      "path": "train.txt",
+      "split": "train",
+      "sha256": "sha256:abbf6de1d01e9063f1a1b85403c999de5a3f93935530da920fc36ec8981d4233",
+      "byte_length": 35
+    },
+    {
+      "id": "validation-001",
+      "path": "validation.txt",
+      "split": "validation",
+      "sha256": "sha256:f142ced4af9eb42ce5645cb3205cc9cc5fdad895af7bb7363755305606350d19",
+      "byte_length": 37
+    }
+  ],
+  "leakage_findings": [],
+  "temporal_policy_evaluated": true,
+  "temporal_violations": [],
+  "odd_observations": [
+    {
+      "dimension": "illumination",
+      "bins": [
+        {
+          "bin": "declared-range",
+          "evaluation_samples": 2,
+          "meets_declared_minimum": true
+        }
+      ],
+      "missing_or_undeclared_value_samples": 0
+    },
+    {
+      "dimension": "inspection-mode",
+      "bins": [
+        {
+          "bin": "stationary",
+          "evaluation_samples": 2,
+          "meets_declared_minimum": true
+        }
+      ],
+      "missing_or_undeclared_value_samples": 0
+    }
+  ],
+  "declared_checks_passed": true,
+  "limitations": [
+    "Hashes bind observed bytes, not dataset origin, rights, label quality, or completeness.",
+    "ODD bin counts use distinct observed file hashes, not manifest rows; different hashes do not prove independent acquisition. Bin labels are not machine-bound to aviation-card operating conditions, and counts do not establish statistical representativeness or airworthiness approval.",
+    "Group leakage is limited to supplied pseudonymous group_id values; temporal leakage is evaluated only when a boundary is declared.",
+    "File replacement during analysis is not prevented; operate on an immutable snapshot for release evidence."
+  ]
+}

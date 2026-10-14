@@ -11,6 +11,8 @@ The card records a publisher's intended use, **declared** EASA AI typology, prop
 3. If a vendor chooses public discovery, serve its own card over HTTPS at `/.well-known/aviation-ml/<system_id>.json` with `Content-Type: application/json`. This repository does not deploy that path.
 4. Link the card's dataset manifest and ODD evidence refs to separately reviewable artifacts. A URI is a pointer, not verified coverage.
 
+The [synthetic golden packet](examples/golden-packet/README.md) shows an actual Rust dataset report and detached signature, a signed MRO review fixture, an aviation Incident Card profile, and a **pending** Procurement Decision Card. Its CI uses pinned cross-repository commits and reports unmapped or unknown ODD bins explicitly. The sample is not evidence of representative coverage or an operational approval.
+
 The v0.1 `assurance.easa_ai_level` values are `1A`, `1B`, `2A`, `2B`, and `3A`. **`3B` is reserved and rejected** by this draft. For `2B` and `3A`, this Suite profile requires a declared human override path. That is a conservative disclosure rule, **not a statement that EASA mandates an override for every Level 2B design**. EASA's NPA 2025-07 is proposed material, and its Level 3 concept paper is exploratory. See [sources](docs/SOURCES.md).
 
 ## Files

@@ -1,0 +1,39 @@
+{
+  "decision_card_version": "0.1",
+  "disclaimer": "Synthetic governance fixture only. No buyer approval, aviation authority action, or maintenance release exists.",
+  "decision_id": "SYNTHETIC-AERO-PENDING-001",
+  "issued_at": "2026-10-12T20:49:55Z",
+  "buyer": {
+    "name": "Fictional Aviation Buyer (synthetic)",
+    "type": "organization"
+  },
+  "decision": {
+    "status": "pending",
+    "scope": "Fictional offline evaluation only; no procurement or operational authorization."
+  },
+  "subject": {
+    "vendor_name": "Fictional Aviation Lab",
+    "product_name": "Synthetic Inspection Assistant",
+    "documents_reviewed": [
+      {
+        "type": "other",
+        "url": "https://example.invalid/aviation/packet/aviation-card.json",
+        "content_hash": "sha256:798495f2b428d2b190dbba1dec35c6097681b7649eed5ec78ce81da1a9ae519c",
+        "version": "0.1"
+      },
+      {
+        "type": "other",
+        "url": "https://example.invalid/aviation/packet/mro-card.json",
+        "content_hash": "sha256:226df1f71f9a7f8385320b3f991df9bd52c12b4a083b731436d78fe2aaf1465a",
+        "version": "0.1"
+      },
+      {
+        "type": "incident-card",
+        "url": "https://example.invalid/aviation/packet/incident-card.json",
+        "content_hash": "sha256:d050f9657b5f82721757ca6258bdd4455d4411a2c275cf88b7fe9d6e7abc6da5",
+        "version": "0.1"
+      }
+    ]
+  },
+  "rationale": "Pending synthetic review. Fixture IDs and hashes are checked locally; no actual buyer or vendor evidence has been assessed."
+}

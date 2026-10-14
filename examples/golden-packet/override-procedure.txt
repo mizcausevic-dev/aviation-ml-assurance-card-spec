@@ -1,0 +1,1 @@
+Synthetic fixture only: stop using the model suggestion and route the observation to fictional human review. This is not a maintenance procedure or release-to-service authorization.

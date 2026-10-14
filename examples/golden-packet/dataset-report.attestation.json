@@ -1,0 +1,8 @@
+{
+  "algorithm": "ed25519",
+  "hash_profile": "jcs-rfc8785-v1",
+  "signed_hash": "sha256:0674b1b9cdd7f2a8bef101186b02722c1baf48637bb48c34e18516fb93467783",
+  "signature": "WjecbpvthkgrjGxFWQJEM3FNrilXwCAIxOSNe38NfHUuffD+9OVbs3UMkrhQkvRSsoSBvo5j/Eqm1UWHaOaJDw==",
+  "key_url": "https://example.invalid/aviation/packet/keys/dataset-sha256-51096d6dae41bd2d3fc27286c043e9addd3b74dfb332b46118d275643567f909",
+  "signed_at": "2026-10-12T20:49:49Z"
+}

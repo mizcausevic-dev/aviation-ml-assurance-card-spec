@@ -18,6 +18,13 @@ function checkConditionMap(card) {
   if (conditions.some((condition) => card.odd.excluded_conditions.includes(condition))) {
     throw new Error("ODD operating and excluded conditions must not overlap");
   }
+  const ids = card.odd.condition_evidence.map((row) => row.condition_id).filter((id) => id !== undefined);
+  if (ids.length > 0 && ids.length !== mapped.length) throw new Error("Every ODD condition needs an ID when bin mapping is used");
+  if (new Set(ids).size !== ids.length) throw new Error("Duplicate ODD condition ID");
+  for (const row of card.odd.condition_evidence) {
+    const pairs = (row.bin_refs ?? []).map(({ dimension, bin }) => `${dimension}:${bin}`);
+    if (new Set(pairs).size !== pairs.length) throw new Error(`Duplicate ODD bin reference for ${row.condition}`);
+  }
   const standards = card.assurance.standards_posture.map((row) => row.identifier);
   if (new Set(standards).size !== standards.length) throw new Error("Duplicate standards identifier");
 }

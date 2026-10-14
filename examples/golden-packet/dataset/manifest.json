@@ -1,0 +1,36 @@
+{
+  "manifest_version": "0.1.0",
+  "dataset_id": "SYNTHETIC-AERO-PACKET-001",
+  "odd_bins": {
+    "illumination": ["declared-range"],
+    "inspection-mode": ["stationary"]
+  },
+  "minimum_evaluation_samples_per_bin": 1,
+  "temporal_train_before_epoch_s": 200,
+  "samples": [
+    {
+      "id": "train-001",
+      "path": "train.txt",
+      "split": "train",
+      "group_id": "fictional-acquisition-001",
+      "captured_at_epoch_s": 100,
+      "odd_values": { "illumination": "declared-range", "inspection-mode": "stationary" }
+    },
+    {
+      "id": "validation-001",
+      "path": "validation.txt",
+      "split": "validation",
+      "group_id": "fictional-acquisition-002",
+      "captured_at_epoch_s": 200,
+      "odd_values": { "illumination": "declared-range", "inspection-mode": "stationary" }
+    },
+    {
+      "id": "test-001",
+      "path": "test.txt",
+      "split": "test",
+      "group_id": "fictional-acquisition-003",
+      "captured_at_epoch_s": 300,
+      "odd_values": { "illumination": "declared-range", "inspection-mode": "stationary" }
+    }
+  ]
+}
