@@ -221,6 +221,9 @@ assert.equal(mro.signature.key_id, `synthetic-aero-packet-reviewer-sha256-${keyF
 assert.ok(verifyCardSignatureRaw(raw("mro-card.json"), trustedMro), "MRO signature invalid");
 assert.ok(!verifyCardSignatureRaw(JSON.stringify({ ...mro, finding: { ...mro.finding, confidence: 0.72 } }), trustedMro), "tampered MRO signature accepted");
 assert.ok(!verifyCardSignatureRaw(raw("mro-card.json"), { ...trustedMro, keyId: "wrong-key" }), "wrong MRO key ID accepted");
+const paddedMro = structuredClone(mro);
+paddedMro.signature.signature_b64url += "=";
+assert.ok(!verifyCardSignatureRaw(JSON.stringify(paddedMro), trustedMro), "padded MRO signature encoding accepted");
 
 assert.equal(decision.decision.status, "pending", "synthetic buyer decision must remain pending");
 assert.equal(decision.subject.vendor_name, card.system.provider);

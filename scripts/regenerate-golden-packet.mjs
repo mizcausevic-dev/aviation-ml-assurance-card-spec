@@ -18,7 +18,7 @@ const rustRepo = resolve(process.env.AERO_DATASET_REPO ?? join(repo, "..", "aero
 const mroRepo = resolve(process.env.AERO_MRO_SPEC_DIR ?? join(repo, "..", "mro-ai-signoff-card-spec"));
 const rustBinary = resolve(process.env.AERO_DATASET_BIN ?? join(rustRepo, "target", "debug", `aero-dataset-provenance${process.platform === "win32" ? ".exe" : ""}`));
 const expectedRustSha = "dc6ff8fb1d0558df7ac009883c2bfead8d76971d";
-const expectedMroSha = "c3cf35b8955194266d70eb855b307ddb6c1bd1dd";
+const expectedMroSha = "7bd2758b50704ff8761145d497e9d0c6eb4f2e4b";
 const rustSha = spawnSync("git", ["rev-parse", "HEAD"], { cwd: rustRepo, encoding: "utf8" });
 assert.equal(rustSha.status, 0, "cannot identify Rust dependency commit");
 assert.equal(rustSha.stdout.trim(), expectedRustSha, "build and pin the reviewed Rust commit first");
