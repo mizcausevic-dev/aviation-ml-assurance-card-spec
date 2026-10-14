@@ -27,6 +27,30 @@ const jcsHash = (value) => sha256(Buffer.from(canonicalize(value), "utf8"));
 const base = "https://example.invalid/aviation/packet/";
 const resourceMap = json("refs.json");
 const url = (name) => `${base}${name}`;
+const datasetPublicKey = Buffer.from(raw("dataset-public-key.b64").toString("ascii").trim(), "base64");
+assert.equal(datasetPublicKey.length, 32, "dataset test public key must contain 32 bytes");
+const expectedKeyUrl = url(`keys/dataset-sha256-${keyFingerprint(datasetPublicKey)}`);
+
+function assertFixtureBindings(mapped) {
+  const expected = {
+    [url("aviation-card.json")]: "aviation-card.json",
+    [url("dataset-manifest.json")]: "dataset/manifest.json",
+    [url("dataset-report.json")]: "dataset-report.json",
+    [url("dataset-report.attestation.json")]: "dataset-report.attestation.json",
+    [url("mro-card.json")]: "mro-card.json",
+    [url("incident-card.json")]: "incident-card.json",
+    [url("incident-index.json")]: "incident-index.json",
+    [url("synthetic-observation.json")]: "synthetic-observation.json",
+    [url("authority/synthetic-reviewer-01")]: "authority-record.json",
+    [url("override-procedure")]: "override-procedure.txt",
+    [url("buyer-decision.json")]: "buyer-decision.json",
+    [expectedKeyUrl]: "dataset-public-key.b64"
+  };
+  assert.deepEqual(new Set(Object.keys(mapped)), new Set(Object.keys(expected)), "synthetic URI fixture set differs");
+  for (const [uri, path] of Object.entries(expected)) {
+    assert.equal(mapped[uri], path, `wrong fixture binding for ${uri}`);
+  }
+}
 
 function fixtureFor(uri) {
   assert.ok(Object.hasOwn(resourceMap, uri), `unmapped synthetic URI: ${uri}`);
@@ -152,11 +176,22 @@ function assertDistinctEvaluationCounts(manifest, report) {
 
 function assertBuyerHashes(buyerDecision, documents) {
   assert.equal(buyerDecision.subject.documents_reviewed.length, documents.size);
+  const seen = new Set();
   for (const ref of buyerDecision.subject.documents_reviewed) {
+    assert.ok(!seen.has(ref.url), `duplicate buyer document: ${ref.url}`);
+    seen.add(ref.url);
     const document = documents.get(ref.url);
     assert.ok(document, `unexpected buyer document: ${ref.url}`);
     assert.equal(ref.content_hash, jcsHash(document), `buyer content hash mismatch: ${ref.url}`);
   }
+  assert.deepEqual(seen, new Set(documents.keys()), "buyer document set is incomplete");
+}
+
+function assertIncidentChronology(incident, mro) {
+  assert.ok(Date.parse(incident.incident.discovered_at) >= Date.parse(mro.signature.signed_at), "incident discovered before MRO signature");
+  assert.ok(Date.parse(incident.incident.disclosed_at) >= Date.parse(incident.incident.discovered_at), "incident disclosed before discovery");
+  assert.ok(Date.parse(incident.published_at) >= Date.parse(incident.incident.disclosed_at), "incident published before disclosure");
+  assert.ok(Date.parse(incident.last_updated_at) >= Date.parse(incident.published_at), "incident updated before publication");
 }
 
 const card = json("aviation-card.json");
@@ -173,6 +208,7 @@ validate(join(mroRepo, "mro-ai-signoff-card.schema.json"), mro, "MRO card");
 validate(join(incidentRepo, "incident-card.schema.json"), incident, "incident card");
 validate(join(decisionRepo, "decision-card.schema.json"), decision, "buyer decision card");
 for (const document of [card, mro, incident, decision, attestation, json("incident-index.json")]) assertAllPacketUrisMapped(document);
+assertFixtureBindings(resourceMap);
 for (const uri of Object.keys(resourceMap)) fixtureFor(uri);
 
 assert.equal(card.system.id, mro.finding.model_id, "MRO model ID mismatch");
@@ -214,8 +250,7 @@ assert.equal(authority.authority_verified, false);
 assert.equal(mro.human_review.authority_ref, url("authority/synthetic-reviewer-01"));
 assert.ok(Date.parse(mro.signature.signed_at) >= Date.parse(mro.human_review.reviewed_at));
 assert.ok(Date.parse(mro.human_review.reviewed_at) >= Date.parse(attestation.signed_at), "MRO fixture predates report signature");
-assert.ok(Date.parse(incident.incident.discovered_at) >= Date.parse(mro.signature.signed_at), "incident fixture predates MRO signature");
-assert.ok(Date.parse(incident.published_at) >= Date.parse(incident.incident.disclosed_at), "incident published before disclosure");
+assertIncidentChronology(incident, mro);
 const trustedMro = { keyId: authority.key_id, publicKey: createPublicKey(raw("mro-public-key.pub")) };
 assert.equal(mro.signature.key_id, `synthetic-aero-packet-reviewer-sha256-${keyFingerprint(trustedMro.publicKey.export({ type: "spki", format: "der" }))}`);
 assert.ok(verifyCardSignatureRaw(raw("mro-card.json"), trustedMro), "MRO signature invalid");
@@ -243,9 +278,6 @@ try {
   const analyzed = runRust("analyze", join(packet, "dataset", "manifest.json"), join(packet, "dataset"), regenerated);
   assert.equal(analyzed.status, 0, `Rust analyzer failed: ${analyzed.stderr}`);
   assert.equal(canonicalize(parseJcsJsonStrict(readFileSync(regenerated))), canonicalize(report), "committed report differs from fresh dataset analysis");
-  const datasetPublicKey = Buffer.from(raw("dataset-public-key.b64").toString("ascii").trim(), "base64");
-  assert.equal(datasetPublicKey.length, 32, "dataset test public key must contain 32 bytes");
-  const expectedKeyUrl = url(`keys/dataset-sha256-${keyFingerprint(datasetPublicKey)}`);
   assert.equal(attestation.key_url, expectedKeyUrl, "report key URL differs from test key fingerprint");
   const verifyArgs = [regenerated, join(packet, "dataset-report.attestation.json"), expectedKeyUrl];
   const verified = runRust("verify", ...verifyArgs);
@@ -285,7 +317,16 @@ assert.throws(() => assertDistinctEvaluationCounts(manifest, inflatedReport), /d
 const badDecision = structuredClone(decision);
 badDecision.subject.documents_reviewed[0].content_hash = `sha256:${"0".repeat(64)}`;
 assert.throws(() => assertBuyerHashes(badDecision, expectedDocs), /buyer content hash mismatch/);
+const duplicateDecisionRef = structuredClone(decision);
+duplicateDecisionRef.subject.documents_reviewed[2] = structuredClone(duplicateDecisionRef.subject.documents_reviewed[0]);
+assert.throws(() => assertBuyerHashes(duplicateDecisionRef, expectedDocs), /duplicate buyer document/);
+const earlyDisclosure = structuredClone(incident);
+earlyDisclosure.incident.disclosed_at = mro.signature.signed_at;
+assert.throws(() => assertIncidentChronology(earlyDisclosure, mro), /incident disclosed before discovery/);
 const brokenReference = structuredClone(incident);
 brokenReference.aviation_profile.mro_signoff_card_uris = [url("missing-mro-card.json")];
 assert.throws(() => assertAllPacketUrisMapped(brokenReference), /unmapped synthetic URI/);
+const wrongFixture = structuredClone(resourceMap);
+wrongFixture[url("aviation-card.json")] = "mro-card.json";
+assert.throws(() => assertFixtureBindings(wrongFixture), /wrong fixture binding/);
 process.stdout.write("VERIFIED four schemas, URI map, cross-card IDs/hashes, fresh Rust analysis, two signatures, and tamper/gap negatives\n");
