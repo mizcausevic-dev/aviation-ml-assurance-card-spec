@@ -89,3 +89,9 @@ Executed checks at this local follow-up head:
 - `gitleaks detect --source . --no-git --exit-code 1 --redact`: exit 0; it reported no findings over approximately 85.6 KB. This scan is not proof that a complete security audit is clean.
 
 After this preparation checkpoint, the refreshed Aviation packet's hosted jobs passed at `6b64b16` as linked above. Any real signer identity, buyer, maintenance authority, dataset rights, representative ODD coverage, and deployment remain unverified.
+
+## Dependency merge checkpoint (2026-10-13 ET)
+
+The reviewed Rust provenance head `dc6ff8f` merged unchanged at `b29b500e29fcac266543325355c0a28bc7c4a542`; the reviewed MRO signature-helper head `7bd2758` merged unchanged at `09095ea2bd1c0abd9fe8454be743711fcc835912`. Both post-merge validation workflows succeeded. The Aviation packet workflow and manual regeneration helper now pin those merged commits. The later packet validator review also added negative controls for padded MRO signatures, duplicate buyer references, incorrect URI-to-file bindings, and incident disclosure before discovery.
+
+At this checkpoint Aviation PR #1 is still a source candidate. No package, Pages site, or hosted endpoint was published by these dependency merges. The packet remains fictional and cannot establish dataset rights, signer authority, representative ODD coverage, buyer approval, maintenance release, or airworthiness.
