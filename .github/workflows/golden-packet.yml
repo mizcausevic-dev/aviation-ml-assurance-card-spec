@@ -20,13 +20,13 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           repository: mizcausevic-dev/aero-dataset-provenance-rs
-          ref: dc6ff8fb1d0558df7ac009883c2bfead8d76971d
+          ref: b29b500e29fcac266543325355c0a28bc7c4a542
           path: deps/dataset
           persist-credentials: false
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           repository: mizcausevic-dev/mro-ai-signoff-card-spec
-          ref: 7bd2758b50704ff8761145d497e9d0c6eb4f2e4b
+          ref: 09095ea2bd1c0abd9fe8454be743711fcc835912
           path: deps/mro
           persist-credentials: false
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
